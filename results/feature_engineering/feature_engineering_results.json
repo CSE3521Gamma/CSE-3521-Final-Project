@@ -1,0 +1,194 @@
+{
+  "seed": 44,
+  "train_rows": 40000,
+  "test_rows": 10000,
+  "train_labels": {
+    "negative_neutral": 8971,
+    "positive": 31029
+  },
+  "test_labels": {
+    "negative_neutral": 2243,
+    "positive": 7757
+  },
+  "repeated_review_bodies": 3620,
+  "representations": {
+    "bow": {
+      "vocab_size": 16897,
+      "top_features": {
+        "positive": [
+          {
+            "term": "great",
+            "chi2": 1076.708
+          },
+          {
+            "term": "best",
+            "chi2": 625.582
+          },
+          {
+            "term": "love",
+            "chi2": 621.756
+          },
+          {
+            "term": "delicious",
+            "chi2": 559.132
+          },
+          {
+            "term": "perfect",
+            "chi2": 414.585
+          },
+          {
+            "term": "excellent",
+            "chi2": 374.457
+          },
+          {
+            "term": "highly",
+            "chi2": 292.099
+          },
+          {
+            "term": "loves",
+            "chi2": 282.696
+          },
+          {
+            "term": "favorite",
+            "chi2": 255.524
+          },
+          {
+            "term": "yummy",
+            "chi2": 238.879
+          }
+        ],
+        "negative_neutral": [
+          {
+            "term": "disappointed",
+            "chi2": 1183.723
+          },
+          {
+            "term": "bad",
+            "chi2": 1060.467
+          },
+          {
+            "term": "not",
+            "chi2": 857.872
+          },
+          {
+            "term": "was",
+            "chi2": 786.498
+          },
+          {
+            "term": "worst",
+            "chi2": 754.17
+          },
+          {
+            "term": "terrible",
+            "chi2": 713.266
+          },
+          {
+            "term": "awful",
+            "chi2": 706.865
+          },
+          {
+            "term": "did",
+            "chi2": 699.5
+          },
+          {
+            "term": "horrible",
+            "chi2": 698.57
+          },
+          {
+            "term": "would",
+            "chi2": 676.662
+          }
+        ]
+      }
+    },
+    "tfidf": {
+      "vocab_size": 16897,
+      "top_features": {
+        "positive": [
+          {
+            "term": "great",
+            "chi2": 135.923
+          },
+          {
+            "term": "best",
+            "chi2": 91.872
+          },
+          {
+            "term": "love",
+            "chi2": 88.041
+          },
+          {
+            "term": "delicious",
+            "chi2": 80.883
+          },
+          {
+            "term": "excellent",
+            "chi2": 60.427
+          },
+          {
+            "term": "perfect",
+            "chi2": 60.176
+          },
+          {
+            "term": "loves",
+            "chi2": 50.125
+          },
+          {
+            "term": "yummy",
+            "chi2": 47.01
+          },
+          {
+            "term": "highly",
+            "chi2": 40.408
+          },
+          {
+            "term": "favorite",
+            "chi2": 39.97
+          }
+        ],
+        "negative_neutral": [
+          {
+            "term": "disappointed",
+            "chi2": 178.434
+          },
+          {
+            "term": "worst",
+            "chi2": 137.482
+          },
+          {
+            "term": "horrible",
+            "chi2": 134.346
+          },
+          {
+            "term": "terrible",
+            "chi2": 134.205
+          },
+          {
+            "term": "awful",
+            "chi2": 132.62
+          },
+          {
+            "term": "bad",
+            "chi2": 132.413
+          },
+          {
+            "term": "ok",
+            "chi2": 114.025
+          },
+          {
+            "term": "not",
+            "chi2": 112.344
+          },
+          {
+            "term": "stale",
+            "chi2": 100.83
+          },
+          {
+            "term": "waste",
+            "chi2": 93.617
+          }
+        ]
+      }
+    }
+  }
+}

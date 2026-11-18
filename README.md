@@ -18,4 +18,74 @@ This project is an end-to-end text intelligence and sentiment classification sys
 
 ## Repository Structure
 ```text
-├── README.md           # Project overview, team info, and reproduction guide
+├── README.md                     # Project overview, team info, and how to run everything
+├── requirements.txt              # Python libraries needed to run the code
+├── data/
+│   ├── raw/
+│   │   └── group_sample_seed44.csv          # Original 50,000-review Seed 44 sample
+│   └── processed/
+│       ├── cleaned_reviews_seed44.csv       # Cleaned review text (Summary + Text) and labels
+│       ├── shared_split_seed44.csv          # Train/test assignment for every review
+│       └── split_indices_seed44.npz         # Same split as row indices (train_idx, test_idx)
+├── features/
+│   ├── X_train_bow.npz / X_test_bow.npz     # Bag of Words matrices (sparse)
+│   ├── X_train_tfidf.npz / X_test_tfidf.npz # TF-IDF matrices (sparse)
+│   ├── y_train.npy / y_test.npy             # Labels (1 = Positive, 0 = Negative/Neutral)
+│   └── bow_vectorizer.joblib / tfidf_vectorizer.joblib  # Fitted vectorizers for new reviews
+├── src/
+│   ├── paths.py                  # Shared folder locations used by every script
+│   ├── feature_engineering.py    # Cleans text, makes the 80/20 split, builds BoW and TF-IDF
+│   ├── verify_outputs.py         # Checks that the split, labels, and features are correct
+│   └── baseline_models.py        # Trains and evaluates the classical baseline models
+└── results/
+    ├── feature_engineering/      # Word frequency chart, chi-square top-10 features, summary JSON
+    └── baseline/                 # Metrics table, confusion matrices, top-10 LR features,
+                                  # and misclassified test reviews for error analysis
+```
+
+## Getting Started
+Requires Python 3.10 or newer. Run all commands from the repository root.
+
+```bash
+python -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+The processed data, feature matrices, and results are already included, so you can load them directly without rerunning anything:
+
+```python
+import numpy as np
+from scipy.sparse import load_npz
+
+X_train = load_npz("features/X_train_tfidf.npz")   # use "bow" instead of "tfidf" for Bag of Words
+X_test = load_npz("features/X_test_tfidf.npz")
+y_train = np.load("features/y_train.npy")
+y_test = np.load("features/y_test.npy")
+```
+
+To reproduce everything from the raw data:
+
+```bash
+python src/feature_engineering.py   # writes data/processed/, features/, results/feature_engineering/
+python src/verify_outputs.py        # sanity checks on the split, labels, and features
+python src/baseline_models.py       # writes results/baseline/ (takes a few minutes because of KNN tuning)
+```
+
+## Data and Features
+* **Labels:** 4–5 stars = Positive (1), 1–3 stars = Negative/Neutral (0).
+* **Class balance:** 38,786 Positive (77.6%) and 11,214 Negative/Neutral (22.4%).
+* **Split:** 40,000 training and 10,000 testing reviews (80/20, seed 44, same class ratio). Reviews with identical text are always kept on the same side of the split to prevent data leakage.
+* **Features:** Bag of Words and TF-IDF (unigrams, min_df = 3, max_df = 0.95, max 20,000 features), fitted on the training set only. Both have a vocabulary of 16,897 words.
+
+## Baseline Results (Milestone 2)
+Evaluated on the 10,000-review held-out test set. Precision, recall, and F1 are for the Negative/Neutral (minority) class. Hyperparameters were tuned with cross-validation on the training set only.
+
+| Model | Accuracy | Precision | Recall | F1 | Macro F1 |
+|---|---|---|---|---|---|
+| Majority class (always Positive) | 0.776 | 0.000 | 0.000 | 0.000 | 0.437 |
+| KNN (TF-IDF, K = 5) | 0.816 | 0.676 | 0.344 | 0.456 | 0.673 |
+| Multinomial Naive Bayes (BoW) | 0.871 | 0.708 | 0.727 | 0.717 | 0.817 |
+| **Logistic Regression (TF-IDF)** | **0.881** | **0.691** | **0.851** | **0.763** | **0.842** |
+
+Full results, confusion matrices, and the top-10 most informative features are in [`results/`](results/).
