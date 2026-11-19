@@ -20,6 +20,11 @@ This project is an end-to-end text intelligence and sentiment classification sys
 ```text
 ├── README.md                     # Project overview, team info, and how to run everything
 ├── requirements.txt              # Python libraries needed to run the code
+├── streamlit_app.py              # Streamlit entry point (page navigation)
+├── .streamlit/config.toml        # Streamlit theme and server settings
+├── app/
+│   ├── predictor.py              # Model layer (placeholder until models are connected)
+│   └── pages/                    # Analyze a Review, Model Results, About
 ├── data/
 │   ├── raw/
 │   │   └── group_sample_seed44.csv          # Original 50,000-review Seed 44 sample
@@ -71,6 +76,16 @@ python src/feature_engineering.py   # writes data/processed/, features/, results
 python src/verify_outputs.py        # sanity checks on the split, labels, and features
 python src/baseline_models.py       # writes results/baseline/ (takes a few minutes because of KNN tuning)
 ```
+
+## Running the App
+
+```bash
+streamlit run streamlit_app.py
+```
+
+The app opens at http://localhost:8501. It is currently a shell: the pages and layout are in place, but models are not connected yet (see the TODOs in `app/predictor.py`).
+
+To deploy on Streamlit Community Cloud, point a new app at this repository with `streamlit_app.py` as the main file.
 
 ## Data and Features
 * **Labels:** 4–5 stars = Positive (1), 1–3 stars = Negative/Neutral (0).

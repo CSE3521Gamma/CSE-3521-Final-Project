@@ -1,0 +1,8 @@
+[theme]
+primaryColor = "#bb0000"
+
+[server]
+runOnSave = true
+
+[client]
+toolbarMode = "minimal"
