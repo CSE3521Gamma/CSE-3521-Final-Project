@@ -3,6 +3,8 @@
     "features": "bow",
     "best_params": {},
     "cv_macro_f1": null,
+    "train_time_sec": 0.005148249998455867,
+    "predict_time_sec": 5.116700049256906e-05,
     "accuracy": 0.7757,
     "neg_precision": 0.0,
     "neg_recall": 0.0,
@@ -25,51 +27,56 @@
   "KNN (TF-IDF)": {
     "features": "tfidf",
     "best_params": {
-      "n_neighbors": 5,
+      "n_neighbors": 3,
       "weights": "distance"
     },
-    "cv_macro_f1": 0.6670913129408317,
-    "accuracy": 0.8159,
-    "neg_precision": 0.6763157894736842,
-    "neg_recall": 0.3437360677663843,
-    "neg_f1": 0.4558084540348803,
-    "pos_precision": 0.8338600451467268,
-    "pos_recall": 0.9524300631687508,
-    "pos_f1": 0.8892098453391105,
-    "macro_f1": 0.6725091496869954,
+    "cv_macro_f1": 0.6679867151019612,
+    "train_time_sec": 0.1669478416442871,
+    "predict_time_sec": 6.3009826250054175,
+    "accuracy": 0.8031,
+    "neg_precision": 0.5981375358166189,
+    "neg_recall": 0.3722692822113241,
+    "neg_f1": 0.4589172849683979,
+    "pos_precision": 0.8363551836355184,
+    "pos_recall": 0.9276782261183447,
+    "pos_f1": 0.8796528329564207,
+    "macro_f1": 0.6692850589624093,
     "confusion_matrix": [
       [
-        771,
-        1472
+        835,
+        1408
       ],
       [
-        369,
-        7388
+        561,
+        7196
       ]
     ]
   },
   "Multinomial Naive Bayes (BoW)": {
     "features": "bow",
     "best_params": {
-      "alpha": 1.0
+      "alpha": 0.5,
+      "fit_prior": true
     },
-    "cv_macro_f1": 0.8257693246092384,
-    "accuracy": 0.8714,
-    "neg_precision": 0.707592190889371,
-    "neg_recall": 0.727151136870263,
-    "neg_f1": 0.7172383465259454,
-    "pos_precision": 0.92046783625731,
-    "pos_recall": 0.9131107386876369,
-    "pos_f1": 0.9167745275692467,
-    "macro_f1": 0.817006437047596,
+    "cv_macro_f1": 0.8257784942600589,
+    "train_time_sec": 0.01575613021850586,
+    "predict_time_sec": 0.012014416999591049,
+    "accuracy": 0.8726,
+    "neg_precision": 0.7098310957124296,
+    "neg_recall": 0.7307177886758806,
+    "neg_f1": 0.7201230228471002,
+    "pos_precision": 0.9214666493303861,
+    "pos_recall": 0.9136264019595204,
+    "pos_f1": 0.9175297773174521,
+    "macro_f1": 0.8188264000822761,
     "confusion_matrix": [
       [
-        1631,
-        612
+        1639,
+        604
       ],
       [
-        674,
-        7083
+        670,
+        7087
       ]
     ]
   },
@@ -79,6 +86,8 @@
       "C": 2
     },
     "cv_macro_f1": 0.8446110250559711,
+    "train_time_sec": 0.126723051071167,
+    "predict_time_sec": 0.0019181250027031638,
     "accuracy": 0.8813,
     "neg_precision": 0.691304347826087,
     "neg_recall": 0.8506464556397682,

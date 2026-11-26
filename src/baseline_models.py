@@ -1,4 +1,4 @@
-"""M2 baseline results (ML Engineer).
+"""Classical model training and evaluation (ML Engineer, M2 + M3).
 
 Trains classical models on Deb's saved BoW / TF-IDF matrices and reports
 accuracy, precision, recall, and F1 on the 20% held-out test set, compared
@@ -15,12 +15,16 @@ only. Folds are grouped by review body so duplicate reviews never sit on both
 sides of a fold (same rule Deb used for the train/test split). The test set
 is only touched once, for the final numbers.
 
+M3: wider hyperparameter grids, and the training time (refit of the best
+model on all 40,000 training reviews) and prediction time on the test set
+are recorded for the model comparison table.
+
 Run from the repo root:
     python src/baseline_models.py
 """
 
 import json
-from pathlib import Path
+import time
 
 import joblib
 import matplotlib
@@ -77,7 +81,8 @@ def tune(model, grid, X, y, groups, folds=5, jobs=-1):
     cv = StratifiedGroupKFold(n_splits=folds, shuffle=True, random_state=SEED)
     search = GridSearchCV(model, grid, scoring="f1_macro", cv=cv, n_jobs=jobs)
     search.fit(X, y, groups=groups)
-    return search.best_estimator_, search.best_params_, search.best_score_
+    return (search.best_estimator_, search.best_params_, search.best_score_,
+            search.refit_time_)
 
 
 def main():
@@ -90,12 +95,14 @@ def main():
          DummyClassifier(strategy="most_frequent"), None),
         ("KNN (TF-IDF)", "tfidf",
          KNeighborsClassifier(metric="cosine", algorithm="brute"),
-         {"n_neighbors": [5, 15, 35], "weights": ["uniform", "distance"]}),
+         {"n_neighbors": [1, 3, 5, 7, 9, 15], "weights": ["uniform", "distance"]}),
         ("Multinomial Naive Bayes (BoW)", "bow",
-         MultinomialNB(), {"alpha": [0.1, 0.3, 1.0]}),
+         MultinomialNB(), {"alpha": [0.01, 0.03, 0.1, 0.3, 0.5, 1.0, 2.0],
+                           "fit_prior": [True, False]}),
+        # class_weight stays fixed at "balanced" (src/app_models.py sets it too).
         ("Logistic Regression (TF-IDF)", "tfidf",
          LogisticRegression(max_iter=2000, class_weight="balanced"),
-         {"C": [0.5, 1, 2, 4, 8]}),
+         {"C": [0.25, 0.5, 1, 2, 4, 8, 16]}),
     ]
 
     results, preds, fitted = {}, {}, {}
@@ -104,19 +111,25 @@ def main():
         if grid:
             # KNN builds large distance matrices, so use fewer folds/workers.
             is_knn = isinstance(model, KNeighborsClassifier)
-            model, params, cv_f1 = tune(model, grid, Xtr, y_train, groups,
-                                        folds=3 if is_knn else 5,
-                                        jobs=2 if is_knn else -1)
+            model, params, cv_f1, fit_time = tune(model, grid, Xtr, y_train, groups,
+                                                  folds=3 if is_knn else 5,
+                                                  jobs=2 if is_knn else -1)
         else:
+            t0 = time.perf_counter()
             model.fit(Xtr, y_train)
+            fit_time = time.perf_counter() - t0
             params, cv_f1 = {}, None
+        t0 = time.perf_counter()
         y_pred = model.predict(Xte)
+        predict_time = time.perf_counter() - t0
         results[name] = {"features": rep, "best_params": params,
-                         "cv_macro_f1": cv_f1, **metrics(y_test, y_pred)}
+                         "cv_macro_f1": cv_f1, "train_time_sec": fit_time,
+                         "predict_time_sec": predict_time, **metrics(y_test, y_pred)}
         preds[name], fitted[name] = y_pred, model
         print(f"{name:35s} acc={results[name]['accuracy']:.4f} "
               f"neg_f1={results[name]['neg_f1']:.4f} "
-              f"macro_f1={results[name]['macro_f1']:.4f} {params}", flush=True)
+              f"macro_f1={results[name]['macro_f1']:.4f} train={fit_time:.2f}s "
+              f"predict={predict_time:.2f}s {params}", flush=True)
 
     # Results table
     rows = []
@@ -125,7 +138,8 @@ def main():
                      "Neg Precision": r["neg_precision"], "Neg Recall": r["neg_recall"],
                      "Neg F1": r["neg_f1"], "Pos Precision": r["pos_precision"],
                      "Pos Recall": r["pos_recall"], "Pos F1": r["pos_f1"],
-                     "Macro F1": r["macro_f1"]})
+                     "Macro F1": r["macro_f1"], "Train time (s)": r["train_time_sec"],
+                     "Predict time (s)": r["predict_time_sec"]})
     pd.DataFrame(rows).round(4).to_csv(OUT / "baseline_results.csv", index=False)
     with open(OUT / "baseline_results.json", "w") as f:
         json.dump(results, f, indent=2, default=float)

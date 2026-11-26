@@ -45,11 +45,14 @@ This project is an end-to-end text intelligence and sentiment classification sys
 │   ├── verify_outputs.py         # Checks that the split, labels, and features are correct
 │   ├── baseline_models.py        # Trains and evaluates the classical baseline models
 │   ├── deep_model.py             # Trains and evaluates the feedforward neural network
+│   ├── model_comparison.py       # Combines all models into one comparison table and figures
 │   └── app_models.py             # Refits the tuned classical models for the app (models/)
 └── results/
     ├── feature_engineering/      # Word frequency chart, chi-square top-10 features, summary JSON
-    └── baseline/                 # Metrics table, confusion matrices, top-10 LR features,
-                                  # and misclassified test reviews for error analysis
+    ├── baseline/                 # Metrics table, confusion matrices, top-10 LR features,
+    │                             # and misclassified test reviews for error analysis
+    └── comparison/               # M3 model comparison table, confusion matrix for every
+                                  # model, and neural network loss curves
 ```
 
 ## Getting Started
@@ -79,6 +82,8 @@ To reproduce everything from the raw data:
 python src/feature_engineering.py   # writes data/processed/, features/, results/feature_engineering/
 python src/verify_outputs.py        # sanity checks on the split, labels, and features
 python src/baseline_models.py       # writes results/baseline/ (takes a few minutes because of KNN tuning)
+python src/deep_model.py            # feedforward neural network (needs PyTorch: pip install torch)
+python src/model_comparison.py      # writes results/comparison/
 ```
 
 ## Running the App
@@ -119,5 +124,16 @@ Evaluated on the 10,000-review held-out test set. Precision, recall, and F1 are 
 | KNN (TF-IDF, K = 5) | 0.816 | 0.676 | 0.344 | 0.456 | 0.673 |
 | Multinomial Naive Bayes (BoW) | 0.871 | 0.708 | 0.727 | 0.717 | 0.817 |
 | **Logistic Regression (TF-IDF)** | **0.881** | **0.691** | **0.851** | **0.763** | **0.842** |
+
+## Model Comparison (Milestone 3)
+All models use the same 80/20 split. Classical models were re-tuned in M3 with wider hyperparameter grids (cross-validation on the training set only). Precision, recall, and F1 are for the Negative/Neutral class. Training time is the time to fit the final model on the 40,000 training reviews.
+
+| Model | Accuracy | Precision | Recall | F1 | Macro F1 | Training time (s) |
+|---|---|---|---|---|---|---|
+| Majority class (always Positive) | 0.776 | 0.000 | 0.000 | 0.000 | 0.437 | 0.005 |
+| KNN (TF-IDF, K = 3) | 0.803 | 0.598 | 0.372 | 0.459 | 0.669 | 0.17 |
+| Multinomial Naive Bayes (BoW) | 0.873 | 0.710 | 0.731 | 0.720 | 0.819 | 0.02 |
+| **Logistic Regression (TF-IDF)** | **0.881** | **0.691** | **0.851** | **0.763** | **0.842** | **0.13** |
+| Feedforward NN (TF-IDF) | 0.869 | 0.657 | 0.866 | 0.747 | 0.829 | 39.1 |
 
 Full results, confusion matrices, and the top-10 most informative features are in [`results/`](results/).
