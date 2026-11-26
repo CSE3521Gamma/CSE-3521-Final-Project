@@ -88,6 +88,10 @@ The app opens at http://localhost:8501. It is currently a shell: the pages and l
 To deploy on Streamlit Community Cloud, point a new app at this repository with `streamlit_app.py` as the main file.
 
 ## Data and Features
+
+The original dataset is available from [Amazon Fine Food Reviews on Kaggle](https://www.kaggle.com/datasets/snap/amazon-fine-food-reviews).
+The assigned 50,000-review sample used was generated with seed 44, saved as `data/raw/group_sample_seed44.csv`. This exact sample is required to reproduce our results.
+
 * **Labels:** 4–5 stars = Positive (1), 1–3 stars = Negative/Neutral (0).
 * **Class balance:** 38,786 Positive (77.6%) and 11,214 Negative/Neutral (22.4%).
 * **Split:** 40,000 training and 10,000 testing reviews (80/20, seed 44, same class ratio). Reviews with identical text are always kept on the same side of the split to prevent data leakage.
