@@ -20,11 +20,13 @@ This project is an end-to-end text intelligence and sentiment classification sys
 ```text
 ├── README.md                     # Project overview, team info, and how to run everything
 ├── requirements.txt              # Python libraries needed to run the code
-├── streamlit_app.py              # Streamlit entry point (page navigation)
+├── app.py                        # Streamlit entry point (page navigation)
 ├── .streamlit/config.toml        # Streamlit theme and server settings
-├── app/
-│   ├── predictor.py              # Model layer (placeholder until models are connected)
-│   └── pages/                    # Analyze a Review, Model Results, About
+├── ui/
+│   ├── predictor.py              # Loads the models and runs live predictions
+│   ├── data.py                   # Cached loaders for the dataset and saved results
+│   ├── theme.py                  # Shared chart colors (one per model, one per class)
+│   └── pages/                    # Overview, Predict, Data, Model Comparison
 ├── data/
 │   ├── raw/
 │   │   └── group_sample_seed44.csv          # Original 50,000-review Seed 44 sample
@@ -41,7 +43,9 @@ This project is an end-to-end text intelligence and sentiment classification sys
 │   ├── paths.py                  # Shared folder locations used by every script
 │   ├── feature_engineering.py    # Cleans text, makes the 80/20 split, builds BoW and TF-IDF
 │   ├── verify_outputs.py         # Checks that the split, labels, and features are correct
-│   └── baseline_models.py        # Trains and evaluates the classical baseline models
+│   ├── baseline_models.py        # Trains and evaluates the classical baseline models
+│   ├── deep_model.py             # Trains and evaluates the feedforward neural network
+│   └── app_models.py             # Refits the tuned classical models for the app (models/)
 └── results/
     ├── feature_engineering/      # Word frequency chart, chi-square top-10 features, summary JSON
     └── baseline/                 # Metrics table, confusion matrices, top-10 LR features,
@@ -80,12 +84,21 @@ python src/baseline_models.py       # writes results/baseline/ (takes a few minu
 ## Running the App
 
 ```bash
-streamlit run streamlit_app.py
+streamlit run app.py
 ```
 
-The app opens at http://localhost:8501. It is currently a shell: the pages and layout are in place, but models are not connected yet (see the TODOs in `app/predictor.py`).
+The app opens at http://localhost:8501 and has four pages:
 
-To deploy on Streamlit Community Cloud, point a new app at this repository with `streamlit_app.py` as the main file.
+* **Overview** – what the project does, how a prediction works, the model leaderboard, and the team.
+* **Predict** – type a review and see Logistic Regression, Naive Bayes, and KNN classify it side by side, with the words that pushed each prediction.
+* **Data** – class balance, star ratings, review lengths, the most telling words, and a filterable browser for all 50,000 reviews.
+* **Model Comparison** – test-set metrics for every model (including the neural network), confusion matrices, the network's training curves, and the reviews Logistic Regression got wrong.
+
+On the first run the app trains the tuned classical models from the saved features (under a minute) and caches them in `models/`, which is not committed. To build them ahead of time and check that their test scores match the M2 results, run `python src/app_models.py`.
+
+The neural network appears on Model Comparison from its saved results. It is not offered for live predictions because its weights (`deep_model.pt`) are not committed and PyTorch is not in `requirements.txt`. To add it, save the weights, subclass `SentimentModel` in `ui/predictor.py`, and register it in `load_models()`.
+
+**Deploying to Streamlit Community Cloud:** sign in at [share.streamlit.io](https://share.streamlit.io) with GitHub, click **Create app**, pick this repository and the `main` branch, and set the main file path to `app.py`.
 
 ## Data and Features
 

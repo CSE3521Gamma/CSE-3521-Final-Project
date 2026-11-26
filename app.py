@@ -1,9 +1,7 @@
 """Entry point for the Streamlit app.
 
 Run locally from the repository root:
-    streamlit run streamlit_app.py
-
-Streamlit Community Cloud looks for this file name by default.
+    streamlit run app.py
 """
 
 import sys
@@ -20,14 +18,14 @@ st.set_page_config(page_title="Review Sentiment Analyzer", page_icon=":material/
                    layout="wide")
 
 pages = [
-    st.Page("app/pages/analyze.py", title="Analyze a Review", icon=":material/rate_review:",
-            default=True),
-    st.Page("app/pages/model_results.py", title="Model Results", icon=":material/leaderboard:"),
-    st.Page("app/pages/about.py", title="About", icon=":material/info:"),
+    st.Page("ui/pages/overview.py", title="Overview", icon=":material/home:", default=True),
+    st.Page("ui/pages/predict.py", title="Predict", icon=":material/rate_review:"),
+    st.Page("ui/pages/data.py", title="Data", icon=":material/table_chart:"),
+    st.Page("ui/pages/model_comparison.py", title="Model Comparison",
+            icon=":material/leaderboard:"),
 ]
 
 with st.sidebar:
-    st.markdown("**CSE 3521 - Group Gamma**")
-    st.caption("Sentiment analysis of Amazon Fine Food Reviews")
+    st.caption("CSE 3521 - Group Gamma  \nSentiment analysis of Amazon Fine Food Reviews")
 
 st.navigation(pages).run()

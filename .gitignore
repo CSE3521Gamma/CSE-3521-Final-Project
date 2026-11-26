@@ -13,3 +13,6 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Models trained by src/app_models.py (rebuilt automatically by the app)
+models/

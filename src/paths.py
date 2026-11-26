@@ -9,6 +9,7 @@ PROCESSED = ROOT / "data" / "processed"
 FEATURES = ROOT / "features"
 FE_RESULTS = ROOT / "results" / "feature_engineering"
 BASELINE_RESULTS = ROOT / "results" / "baseline"
+MODELS = ROOT / "models"
 
-for folder in (PROCESSED, FEATURES, FE_RESULTS, BASELINE_RESULTS):
+for folder in (PROCESSED, FEATURES, FE_RESULTS, BASELINE_RESULTS, MODELS):
     folder.mkdir(parents=True, exist_ok=True)
